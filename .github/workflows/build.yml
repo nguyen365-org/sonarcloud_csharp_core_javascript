@@ -36,9 +36,6 @@ jobs:
       - name: Run Jest Tests with Coverage
         run: npm test -- --coverage --coverageReporters=lcov --coverageDirectory=.
 
-      - name: Verify Coverage File
-        run: ls -la lcov.info
-
       - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
         with:
