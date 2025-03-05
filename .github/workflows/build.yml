@@ -27,11 +27,17 @@ jobs:
 
       - name: Install JavaScript dependencies
         run: npm install
-        working-directory: WebApplication/Scripts
+        # working-directory: WebApplication/Scripts
 
       # Run Jest Tests & Generate Coverage Report (Outputs: ./coverage/lcov.info)
-      - name: Run Jest tests
-        run: npm test
+      # - name: Run Jest tests
+      #   run: npm test
+
+      - name: Run Jest Tests with Coverage
+        run: npm test -- --coverage --coverageReporters=lcov --coverageDirectory=.
+
+      - name: Verify Coverage File
+        run: ls -la lcov.info
 
       - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
@@ -57,7 +63,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"nguyen365-org_sonarcloud_csharp_core_javascript" /o:"nguyen365-org" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml /d:sonar.javascript.lcov.reportPaths=./coverage/lcov.info
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"nguyen365-org_sonarcloud_csharp_core_javascript" /o:"nguyen365-org" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml /d:sonar.javascript.lcov.reportPaths=lcov.info
           dotnet build
           dotnet test WebApplication.Tests/WebApplication.Tests.csproj /p:CollectCoverage=true /p:CoverletOutput=coverage.xml /p:CoverletOutputFormat=opencover
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
